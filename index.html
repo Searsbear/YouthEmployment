@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0, viewport-fit=cover"/>
+    <meta name="theme-color" content="#020617" />
+    <title>Dynamic Resource Hub</title>
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #3b82f6;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 20px;
+        }
+
+        .container { max-width: 600px; margin: auto; }
+        
+        /* Layout structures matching your original components */
+        .resource-header {
+            display: block;
+            font-weight: bold;
+            padding: 10px;
+            background: #1e293b;
+            margin-top: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            padding: 10px;
+            background: #111827;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .sub-link {
+            display: block;
+            text-decoration: none;
+            color: var(--text);
+            margin-bottom: 15px;
+            padding: 8px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .link-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Your Custom Info-Tip & Tip-Box Layout Engine */
+        .info-tip {
+            position: relative; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center; 
+            background: #334155; 
+            color: var(--text-muted);
+            border-radius: 50%; 
+            width: 18px; 
+            height: 18px; 
+            font-size: 11px;
+            font-weight: bold; 
+            cursor: help; 
+            margin-left: 6px; 
+            user-select: none;
+            outline: none; 
+            transition: background 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .info-tip:hover, .info-tip:focus { 
+            background: var(--accent-blue); 
+            color: var(--bg); 
+        }
+
+        .info-tip .tip-box {
+            visibility: hidden; 
+            width: 240px; 
+            background-color: #1e293b;
+            color: var(--text); 
+            text-align: left; 
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px; 
+            padding: 12px; 
+            position: absolute; 
+            z-index: 99;
+            bottom: 135%; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            opacity: 0;
+            transition: opacity 0.2s, visibility 0.2s; 
+            font-weight: normal;
+            font-size: 0.85rem; 
+            line-height: 1.4; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            pointer-events: none;
+        }
+
+        .info-tip .tip-box::after {
+            content: ""; 
+            position: absolute; 
+            top: 100%; 
+            left: 50%;
+            margin-left: -6px; 
+            border-width: 6px; 
+            border-style: solid;
+            border-color: var(--accent-blue) transparent transparent transparent;
+        }
+
+        .info-tip:hover .tip-box, .info-tip:focus .tip-box { 
+            visibility: visible; 
+            opacity: 1; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Resource Manager</h3>
+    <div id="dynamic-resource-container">Loading and compiling resource elements...</div>
+</div>
+
+<script>
+// Mocking your plug-and-play text file configuration directly as a template literal string
+const rawTextData = `
+Find My [[Landlord]] 
+https://findmylandlord.netlify.app/ 
+Search Landlord 
+
+Find Building Owner, Total Units, Property Value, Potential Business Name 
+https://montreal.ca/en/how-to/check-property-assessment-rolls 
+Search Property Rolls 
+*this is for searching the property rolls to find out who owns the building*
+
+Canada Post Building Unit Count 
+https://www.canadapost-postescanada.ca/ac/ 
+Search using Address Complete 
+
+Rental Tools 
+        Rental Registry 
+        https://rentalregistry.ca/en/qc 
+        Registry of current and past rent prices 
+
+        Like Home 
+        http://likehome.info/neighbourhoods/ 
+        Map for finding neighborhood apartment prices/livability 
+
+        Ville de MTL Sanitation, Maintenance and Safety Dwellings 
+        https://montreal.ca/en/topics/sanitation-maintenance-and-safety-dwellings 
+        Find information about building safety and maintenance 
+
+        Rate the Landlord 
+        https://ratethelandlord.org/ 
+        Find information about landlord ratings and reviews 
+`;
+
+document.addEventListener("DOMContentLoaded", () => {
+    parseTextToUI(rawTextData);
+});
+
+function parseTextToUI(text) {
+    // Split text into individual clean lines, removing empty dead spaces
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    
+    let htmlOutput = "";
+    let insideGroup = false;
+
+    const isUrl = (str) => str.startsWith('http://') || str.startsWith('https://');
+
+    let i = 0;
+    while (i < lines.length) {
+        
+        // Context Check 1: Detect Category Group Headers
+        // Lookahead rule: If current line is text, next line is text, and the line after that is a URL,
+        // it means the current line is a category title (like "Rental Tools").
+        if (i + 2 < lines.length && !isUrl(lines[i]) && !isUrl(lines[i+1]) && isUrl(lines[i+2]) && !lines[i].startsWith('*')) {
+            if (insideGroup) {
+                htmlOutput += `</div></details>\n`;
+            }
+            htmlOutput += `<details class="resource-group" open>\n`;
+            htmlOutput += `  <summary class="resource-header">${lines[i]}</summary>\n`;
+            htmlOutput += `  <div class="dropdown-content">\n`;
+            insideGroup = true;
+            i++; 
+            continue;
+        }
+
+        // Context Check 2: Detect Standard Link Elements
+        if (i + 1 < lines.length && isUrl(lines[i+1])) {
+            let title = lines[i].replace(/\[\[|\]\]/g, ''); // Strips out [[ and ]] seamlessly
+            let url = lines[i+1];
+            let shortDesc = "";
+            let tipBoxText = "";
+
+            i += 2; // Move past layout processing pointer for title and URL
+
+            // Capture optional Short Description line
+            if (i < lines.length && !isUrl(lines[i]) && !lines[i].startsWith('*')) {
+                // Lookahead protection: Make sure this isn't simply the next item's title
+                if (i + 1 < lines.length && isUrl(lines[i+1])) {
+                    // Do nothing: it's a title line for the next loop block
+                } else {
+                    shortDesc = lines[i];
+                    i++;
+                }
+            }
+
+            // Capture optional Tip-Box Asterisk explanation line
+            if (i < lines.length && lines[i].startsWith('*')) {
+                tipBoxText = lines[i].replace(/\*/g, '').trim();
+                i++;
+            }
+
+            // Assemble UI Component Template
+            htmlOutput += `    <a href="${url}" target="_blank" class="sub-link">\n`;
+            htmlOutput += `        <strong>${title}</strong>\n`;
+            
+            if (tipBoxText) {
+                htmlOutput += `        <span class="info-tip" tabindex="0">?`;
+                htmlOutput += `            <div class="tip-box">${tipBoxText}</div>`;
+                htmlOutput += `        </span>\n`;
+            }
+            
+            if (shortDesc) {
+                htmlOutput += `        <br><span class="link-text">${shortDesc}</span>\n`;
+            }
+            
+            htmlOutput += `    </a>\n`;
+            continue;
+        }
+
+        i++; // Fallback pointer incremental advance step
+    }
+
+    // Close final group bracket if left open
+    if (insideGroup) {
+        htmlOutput += `</div></details>\n`;
+    }
+
+    // Inject generated HTML markup into container framework
+    const container = document.getElementById('dynamic-resource-container');
+    container.innerHTML = htmlOutput;
+
+    // Secure click events on info tips so clicking them doesn't activate links
+    container.querySelectorAll('.info-tip').forEach(tip => {
+        tip.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+}
+</script>
+
+</body>
+</html>
