@@ -169,28 +169,6 @@
             opacity: 1; 
         }
 
-        /* --- Language Elements & Standard Layout Control Controls --- */
-        .lang-selector {
-            margin: 25px 0 15px 0; 
-            text-align: center;
-        }
-
-        .lang-btn {
-            background: #1e293b;
-            border: 1px solid #334155;
-            color: var(--text);
-            padding: 6px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .lang-btn:hover {
-            background: #334155;
-            border-color: var(--accent-blue);
-        }
-
         .footer-disclaimer {
             font-size: 0.75rem; 
             color: #f43f5e;
@@ -277,16 +255,6 @@
     
     <span class="footer-disclaimer">Disclaimer: All compiled resources are provided as is and compiled from many sources. Use at your own discretion.</span>
 </div>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('System Cache Connection Engine Active:', reg.scope))
-        .catch(err => console.log('Service Worker connection trace crash:', err));
-    });
-  }
-</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
