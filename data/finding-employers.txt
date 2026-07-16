@@ -1,28 +1,12 @@
 Step 4: Finding Potential Employers
 	Québec Emploi
 	https://www.quebec.ca/en/employment/find-job-internship/view-job-offers
-    Help for
+    Find Job offers in a field of your choice using the government portal
 
 	Key business sectors in Montreal
 	https://www.montrealinternational.com/en/keysectors/
-    Help for
-
-	Which websites should I use to find a job in Quebec
-    https://git.ac.ca/2021/07/18/quels-sites-web-utiliser-pour-trouver-un-
-    Help for
-
-	Job offer site directory (Website in french only)
-    https://www.laportedelemploi.com/fr/repertoire-sites-offres-emploi
-    Help for
-
-	Labor market partners commission (Website in French only)
-    https://www.cpmt.gouv.qc.ca/la-cpmt-et-ses-	partenaires/partenaires/comites-sectoriels-de-main-doeuvre/
-    Help for
-
-	List of Quebec professional orders (Website in French only)
-    https://www.professions-quebec.org/fr/liste-des-ordres-professionnels
-    Help for
+    Learn about montreals key business sectors
 
 	Work in government
 	https://www.quebec.ca/en/government/work-government
-    Help for
+	Find work in government
