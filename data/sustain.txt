@@ -4,12 +4,12 @@ Step 5: Sustaining Employment
     Loop plugs to reduce noise
     *For Reducing noise in the work environement to prevent overstimulation. Ask employer if allowed.*
 
-    Time Management 🕰️
+    🕰️ Time Management 🕰️
     https://searsbear.github.io/TimeMath/
     To help manage time and maintain consistent routines
     *This can help as a starting point for creating many plans or options to structure routines and time. Having a few plans to draw from or multiple routines to draw from can help with sustaining employement. It allows for some flexibility while also being able to maintain a routine. For example having 2 or 3 morning routines. 1 main and 2 backups because life is rarely ever perfect all the time. So if breakfast is never to be skipped, finding a breakfast that can sit in the freezer for the times when breakfast cannot be made would be a good strategy. Having a few bus or transit options available or known is ideal too. This can allow for variations in transit options and transit timing. It requires some work but has a meaningful impact on sustaining employment long term because there isnt only one option eing relied on.*
 
-    View Live Transit Options 🚌
+    🚌 View Live Transit Options 🚌
     https://mobility.portal.geops.io/world.geops.transit?layers=paerke,strassennamen,haltekanten,haltestellen,pois,world.geops.traviclive&x=810000&y=5900000&z=5.5&baselayer=world.geops.travic
     View other Transit options available around you to find other potential routes ot and from your employer
 
