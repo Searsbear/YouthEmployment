@@ -3,3 +3,8 @@ Step 6: Finding Support
   https://searsbear.github.io/SearchMontreal/
   This is to help finding other resources to help aid in finding resources that help with employment and neurodivergence.
   *The search engine uses 211 Montreal's Data in order to help find resources more easily. Search terms like "employment" or "neurodivergent" or "job search" or "job help" can be used to help find resources to help with your employment.*
+
+  211 Montreal
+  https://www.211qc.ca/en/search?cat-id=6&place=Montreal,%20QC,%20Canada&field11=Montreal&field12=Montreal
+  211 Montreal Resources for help with employment and income support
+  *A link to a complete list of resources for help with employment and income support. Some are for specifically neurodivergence and others are for more general help with employment.*
