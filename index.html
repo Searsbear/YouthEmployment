@@ -18,6 +18,11 @@
             --dropdown-bg: #111827;
         }
 
+        /* Prevent the page from scrolling left-to-right */
+        html, body {
+            overflow-x: hidden;
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text);
@@ -49,7 +54,7 @@
             display: inline-block;
             margin-bottom: 20px;
         }
-        
+
         /* --- Dynamic Collapsible Lists --- */
         .resource-group {
             margin-bottom: 15px;
@@ -132,6 +137,7 @@
         .info-tip .tip-box {
             visibility: hidden; 
             width: 240px; 
+            max-width: calc(100vw - 32px); /* Keeps box within screen margins on mobile */
             background-color: #1e293b;
             color: var(--text); 
             text-align: left; 
@@ -233,14 +239,12 @@
 <div class="container">
     <main>
         <h3 class="main-title" data-i18n="main-title">Neurodivergent Employment Resource</h3>
-        </h3>
         <span class="subtitle" data-i18n="subtitle">Checklist for finding and sustaining employment for neurodivergent youth</span>
 
         <div class="global-controls">
             <button class="control-btn" id="btn-open-all">Open All</button>
             <button class="control-btn" id="btn-close-all">Close All</button>
         </div>
-
 
         <div id="dynamic-resource-container">Compiling database...</div>
     </main>
@@ -251,15 +255,15 @@
             <div class="dropdown-content">
                 <img src="images/qr-code.png" style="width: 100%; max-width: 300px; display: block; margin: 10px auto;">
             </div>
+        </details>
     </div>
-    
+
     <span class="footer-disclaimer">Disclaimer: All compiled resources are provided as is and compiled from many sources. Use at your own discretion.</span>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Structural File Assignment Matrix
-    // Maps each explicit text database asset file path to its presentation layer theme class
     const dataFiles = [
         { path: 'data/questionaire.txt', colorClass: 'theme-qr-code' },
         { path: 'data/prepping.txt', colorClass: 'theme-rental' },
@@ -280,7 +284,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 continue;
             }
             const rawTextData = await response.text();
-            
+
             // Build segment modules and combine them into global buffer
             combinedHTML += convertTextToHTML(rawTextData, file.colorClass);
         } catch (err) {
@@ -292,8 +296,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     const container = document.getElementById('dynamic-resource-container');
     container.innerHTML = combinedHTML || "<p style='text-align:center; color:var(--text-muted);'>No clean assets initialized inside workspace.</p>";
 
-    // 4. Secure click boundary interception for popup tip nodes
+    // 4. Secure click boundary interception & auto-repositioning for popup tips
+    function keepTipInBounds(tip) {
+        const tipBox = tip.querySelector('.tip-box');
+        if (!tipBox) return;
+
+        // Reset positioning to measure natural center
+        tipBox.style.left = '50%';
+        tipBox.style.right = 'auto';
+        tipBox.style.transform = 'translateX(-50%)';
+
+        const rect = tipBox.getBoundingClientRect();
+        const padding = 16; // Margin from screen edge
+
+        // If overflowing right edge, align right edge of tipbox to the icon
+        if (rect.right > window.innerWidth - padding) {
+            tipBox.style.left = 'auto';
+            tipBox.style.right = '0';
+            tipBox.style.transform = 'none';
+        } 
+        // If overflowing left edge, align left edge of tipbox to the icon
+        else if (rect.left < padding) {
+            tipBox.style.left = '0';
+            tipBox.style.right = 'auto';
+            tipBox.style.transform = 'none';
+        }
+    }
+
     container.querySelectorAll('.info-tip').forEach(tip => {
+        tip.addEventListener('mouseenter', () => keepTipInBounds(tip));
+        tip.addEventListener('focus', () => keepTipInBounds(tip));
         tip.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation(); // Prevents bubbling to <a> tags and executing link route logic
@@ -305,14 +337,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 function convertTextToHTML(text, colorClass) {
     // Read individual row matrices, strip formatting deadspaces, drop blank lines
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-    
+
     let htmlOutput = "";
     let insideGroup = false;
     const isUrl = (str) => str.startsWith('http://') || str.startsWith('https://');
 
     let i = 0;
     while (i < lines.length) {
-        
+
         // Target Mode Alpha: Detect and build Category Group Headers
         if (i + 2 < lines.length && !isUrl(lines[i]) && !isUrl(lines[i+1]) && isUrl(lines[i+2]) && !lines[i].startsWith('*')) {
             if (insideGroup) {
@@ -354,17 +386,17 @@ function convertTextToHTML(text, colorClass) {
             // Build structural output string segments
             htmlOutput += `    <a href="${url}" target="_blank" class="sub-link">\n`;
             htmlOutput += `        <strong>${title}</strong>\n`;
-            
+
             if (tipBoxText) {
                 htmlOutput += `        <span class="info-tip" tabindex="0">?`;
                 htmlOutput += `            <div class="tip-box">${tipBoxText}</div>`;
                 htmlOutput += `        </span>\n`;
             }
-            
+
             if (shortDesc) {
                 htmlOutput += `        <br><span class="link-text">${shortDesc}</span>\n`;
             }
-            
+
             htmlOutput += `    </a>\n`;
             continue;
         }
@@ -379,6 +411,7 @@ function convertTextToHTML(text, colorClass) {
     return htmlOutput;
 }
 </script>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     // Select the buttons
